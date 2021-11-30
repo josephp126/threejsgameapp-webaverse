@@ -1,21 +1,21 @@
 import * as THREE from 'three';
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import styles from './Header.module.css';
 import Inspector from './Inspector.jsx';
 import Chat from './Chat.jsx';
 import MagicMenu from './MagicMenu.jsx';
 import * as Y from 'yjs';
-import {Color} from './Color.js';
-import {world} from '../world.js'
-import {rigManager} from '../rig.js'
+import { Color } from './Color.js';
+import { world } from '../world.js'
+import { rigManager } from '../rig.js'
 import game from '../game.js'
 import * as universe from '../universe.js'
 import * as hacks from '../hacks.js'
 import cameraManager from '../camera-manager.js'
 import metaversefile from '../metaversefile-api.js'
 import ioManager from '../io-manager.js'
-import {parseQuery} from '../util.js'
+import { parseQuery } from '../util.js'
 import * as ceramicApi from '../ceramic.js';
 // import * as ceramicAdmin from '../ceramic-admin.js';
 import sceneNames from '../scenes/scenes.json';
@@ -24,27 +24,31 @@ const localEuler = new THREE.Euler();
 
 // console.log('index 1');
 
-const _makeName = (N = 8) => (Math.random().toString(36)+'00000000000000000').slice(2, N+2);
-const _getCurrentSceneSrc = () => {
+const _makeName = (N = 8) => (Math.random().toString(36) + '00000000000000000').slice(2, N + 2);
+const _getCurrentSceneSrc = () =>
+{
   const q = parseQuery(window.location.search);
-  let {src} = q;
+  let { src } = q;
   if (src === undefined) {
     src = './scenes/' + sceneNames[0];
   }
   return src;
 };
-const _getCurrentRoom = () => {
+const _getCurrentRoom = () =>
+{
   const q = parseQuery(window.location.search);
-  const {room} = q;
+  const { room } = q;
   return room || '';
 };
 
-const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen, toggleOpen, multiplayerConnected, micOn, toggleMic}) => {
+const Location = ({ sceneName, setSceneName, roomName, setRoomName, open, setOpen, toggleOpen, multiplayerConnected, micOn, toggleMic }) =>
+{
   const [rooms, setRooms] = useState([]);
   const scenesOpen = open === 'scenes';
   const multiplayerOpen = open === 'multiplayer';
-  
-  const refreshRooms = async () => {
+
+  const refreshRooms = async () =>
+  {
     const res = await fetch(universe.getWorldsHost() + '@worlds/');
     if (res.ok) {
       const rooms = await res.json();
@@ -59,7 +63,8 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
   return (
     <div className={styles.location}>
       <div className={styles.row}>
-        <div className={styles['button-wrap']} onClick={e => {
+        <div className={styles['button-wrap']} onClick={e =>
+        {
           toggleOpen('scenes');
         }}>
           <button className={classnames(styles.button, styles.primary, scenesOpen ? null : styles.disabled)}>
@@ -67,9 +72,11 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
           </button>
         </div>
         <div className={styles['input-wrap']}>
-          <input type="text" className={styles.input} value={multiplayerConnected ? roomName : sceneName} onChange={e => {
+          <input type="text" className={styles.input} value={multiplayerConnected ? roomName : sceneName} onChange={e =>
+          {
             setSceneName(e.target.value);
-          }} disabled={multiplayerConnected} onKeyDown={e => {
+          }} disabled={multiplayerConnected} onKeyDown={e =>
+          {
             // console.log('key down', e);
             switch (e.which) {
               case 13: { // enter
@@ -78,12 +85,14 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
                 break;
               }
             }
-          }} onFocus={e => {
+          }} onFocus={e =>
+          {
             setOpen(null);
           }} placeholder="Goto..." />
           <img src="images/webpencil.svg" className={classnames(styles.background, styles.green)} />
         </div>
-        <div className={styles['button-wrap']} onClick={e => {
+        <div className={styles['button-wrap']} onClick={e =>
+        {
           if (!multiplayerConnected) {
             toggleOpen('multiplayer');
           } else {
@@ -106,7 +115,8 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
       </div>
       {scenesOpen ? <div className={styles.rooms}>
         {sceneNames.map((sceneName, i) => (
-          <div className={styles.room} onClick={async e => {
+          <div className={styles.room} onClick={async e =>
+          {
             universe.pushUrl(`/?src=${encodeURIComponent('./scenes/' + sceneName)}`);
             setOpen(null);
           }} key={i}>
@@ -117,12 +127,13 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
       </div> : null}
       {multiplayerOpen ? <div className={styles.rooms}>
         <div className={styles.create}>
-          <button className={styles.button} onClick={async e => {
+          <button className={styles.button} onClick={async e =>
+          {
             e.preventDefault();
             e.stopPropagation();
 
             const roomName = _makeName();
-            console.log('got room name 0', {roomName}, universe.getWorldsHost() + '@worlds/' + roomName);
+            console.log('got room name 0', { roomName }, universe.getWorldsHost() + '@worlds/' + roomName);
             const data = Y.encodeStateAsUpdate(world.getState(true));
             // console.log('post data', universe.getWorldsHost() + '@worlds/' + roomName, world.getState(true).toJSON(), data);
             console.log('post', universe.getWorldsHost() + '@worlds/' + roomName);
@@ -130,15 +141,15 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
               method: 'POST',
               body: data,
             });
-            console.log('got room name 1', {roomName});
+            console.log('got room name 1', { roomName });
             if (res.ok) {
               // const j = await res.json();
               // console.log('world create result', j);
 
               refreshRooms();
-              
+
               universe.pushUrl(`/?src=${encodeURIComponent(sceneName)}&room=${roomName}`);
-              
+
               /* this.parent.sendMessage([
                 MESSAGE.ROOMSTATE,
                 data,
@@ -150,36 +161,26 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
           }}>Create room</button>
         </div>
         {rooms.map((room, i) => (
-          <div className={styles.room} onClick={async e => {
+          <div className={styles.room} onClick={async e =>
+          {
             if (!world.isConnected() && rigManager.localRig) {
               universe.pushUrl(`/?src=${encodeURIComponent(sceneName)}&room=${room.name}`);
-              /* const isConnected = world.isConnected();
-              setMultiplayerConnected(isConnected);
-              if (isConnected) {
-                setRoomName(room.name);
-                setMultiplayerOpen(false);
-              } */
             }
           }} key={i}>
             <img className={styles.image} src="images/world.jpg" />
             <div className={styles.name}>{room.name}</div>
             <div className={styles.delete}>
-              <button className={classnames(styles.button, styles.warning)} onClick={async e => {
+              <button className={classnames(styles.button, styles.warning)} onClick={async e =>
+              {
                 e.preventDefault();
                 e.stopPropagation();
 
                 const res = await fetch(universe.getWorldsHost() + '@worlds/' + room.name, {
                   method: 'DELETE'
                 });
-                // console.log('got click 0');
                 if (res.ok) {
-                  /// console.log('got click 1', rooms.indexOf(room));
                   refreshRooms();
-                  // const newRooms = rooms.slice().splice(rooms.indexOf(room), 1);
-                  // console.log('set rooms', rooms, newRooms);
-                  // setRooms(newRooms);
                 } else {
-                  // console.log('got click 2');
                   const text = await res.text();
                   console.warn('failed to fetch', res.status, text);
                 }
@@ -191,18 +192,17 @@ const Location = ({sceneName, setSceneName, roomName, setRoomName, open, setOpen
     </div>
   );
 };
-const User = ({address, setAddress, open, setOpen, toggleOpen}) => {
+const User = ({ address, setAddress, open, setOpen, toggleOpen }) =>
+{
   const userOpen = open === 'user';
-  
   const [loggingIn, setLoggingIn] = useState(false);
-
   /* (async () => {
     const {createSchema} = await ceramicAdmin.waitForLoad();
     const schema = await createSchema();
     console.log('create', schema);
   })(); */
-  
-  /* const login = async () => {
+
+  const login = async () => {
     if (typeof window.ethereum !== 'undefined') {
       const addresses = await window.ethereum.request({
         method: 'eth_requestAccounts',
@@ -213,47 +213,60 @@ const User = ({address, setAddress, open, setOpen, toggleOpen}) => {
     } else {
       console.warn('no ethereum');
     }
-  }; */
-  
-  return (
-    <div className={classnames(styles.user, loggingIn ? styles.loggingIn : null)} onClick={async e => {
-      e.preventDefault();
-      e.stopPropagation();
+  }; 
 
-      if (address) {
-        toggleOpen('user');
-      } else {
-        if (!loggingIn) {
-          setLoggingIn(true);
-          try {
-            const {address, profile} = await ceramicApi.login();
-            // console.log('login', {address, profile});
-            setAddress(address);
-          } catch(err) {
-            console.warn(err);
-          } finally {
-            setLoggingIn(false);
-          }
-        }
-      }
-    }}>
+  return (
+    <div className={classnames(styles.user, loggingIn ? styles.loggingIn : null)}>
       <img src="images/soul.png" className={styles.icon} />
-      <div className={styles.name}>{loggingIn ? 'Logging in... ' : (address || 'Log in')}</div>
+      <div className={styles.login}>
+        <div className={styles.name}>{loggingIn ? 'Logging in... ' : (address || 'Log in')}</div>
+        <div className={styles.login_hover}>
+          <div className={styles.login_buttons} onClick={async e =>
+                        {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log(styles);
+                          if (address) {
+                            toggleOpen('user');
+                          } else {
+                            if (!loggingIn) {
+                              setLoggingIn(true);
+                              try {
+                                const { address, profile } = await ceramicApi.login();
+                                // console.log('login', {address, profile});
+                                setAddress(address);
+                              } catch (err) {
+                                console.warn(err);
+                              } finally {
+                                setLoggingIn(false);
+                              }
+                            }
+                          }
+                        }}>via Metamask
+          </div>
+          <div className={styles.login_buttons}>
+            <a href="https://discord.com/api/oauth2/authorize?client_id=684141574808272937&redirect_uri=https%3A%2F%2Fapp.webaverse.com%2Flogin&response_type=code&scope=identify">via Discord</a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-const Tab = ({className, type, left, right, top, bottom, disabled, label, panels, before, after, open, toggleOpen, onclick, panelsRef}) => {
+const Tab = ({ className, type, left, right, top, bottom, disabled, label, panels, before, after, open, toggleOpen, onclick, panelsRef }) =>
+{
   if (!onclick) {
-    onclick = e => {
+    onclick = e =>
+    {
       toggleOpen(type);
     };
   }
-  
-  const stopPropagation = e => {
+
+  const stopPropagation = e =>
+  {
     e.stopPropagation();
   };
-  
+
   return (
     <div className={classnames(
       className,
@@ -264,7 +277,7 @@ const Tab = ({className, type, left, right, top, bottom, disabled, label, panels
       bottom ? styles.bottom : null,
       disabled ? styles.disabled : null,
       open === type ? styles.open : null,
-      
+
     )} onClick={onclick}>
       {left ? <>
         {before}
@@ -289,8 +302,10 @@ const Tab = ({className, type, left, right, top, bottom, disabled, label, panels
   );
 };
 
-const NumberInput = ({input}) => {
-  return <input type="number" className={styles.input} value={input.value} onChange={input.onChange} onKeyDown={e => {
+const NumberInput = ({ input }) =>
+{
+  return <input type="number" className={styles.input} value={input.value} onChange={input.onChange} onKeyDown={e =>
+  {
     if (e.which === 13) {
       e.target.blur();
     }
@@ -299,14 +314,12 @@ const NumberInput = ({input}) => {
 
 export default function Header({
   app,
-}) {
-  
+})
+{
   const _getWearActions = () => Array.from(localPlayer.getActions()).filter(action => action.type === 'wear');
-  
-	// console.log('index 2');
+  console.log('index 2');
   const previewCanvasRef = useRef();
   const panelsRef = useRef();
-	
   const [open, setOpen] = useState(null);
   const [selectedApp, setSelectedApp] = useState(null);
   const [address, setAddress] = useState(false);
@@ -318,10 +331,10 @@ export default function Header({
   const [xrSupported, setXrSupported] = useState(false);
   const [claims, setClaims] = useState([]);
   const [dragging, setDragging] = useState(false);
-  
+
   const localPlayer = metaversefile.useLocalPlayer();
   const [wearActions, setWearActions] = useState(_getWearActions());
-  
+
   let [px, setPx] = useState(0);
   let [py, setPy] = useState(0);
   let [pz, setPz] = useState(0);
@@ -331,16 +344,16 @@ export default function Header({
   let [sx, setSx] = useState(1);
   let [sy, setSy] = useState(1);
   let [sz, setSz] = useState(1);
-  px = {value: px, onChange: e => {const v = e.target.value; selectedApp.position.x = v; setPx(v);}};
-  py = {value: py, onChange: e => {const v = e.target.value; selectedApp.position.y = v; setPy(v);}};
-  pz = {value: pz, onChange: e => {const v = e.target.value; selectedApp.position.z = v; setPz(v);}};
-  rx = {value: rx, onChange: e => {const v = e.target.value; selectedApp.rotation.x = v; setRx(v);}};
-  ry = {value: ry, onChange: e => {const v = e.target.value; selectedApp.rotation.y = v; setRy(v);}};
-  rz = {value: rz, onChange: e => {const v = e.target.value; selectedApp.rotation.z = v; setRz(v);}};
-  sx = {value: sx, onChange: e => {const v = e.target.value; selectedApp.scale.x = v; setSx(v);}};
-  sy = {value: sy, onChange: e => {const v = e.target.value; selectedApp.scale.y = v; setSy(v);}};
-  sz = {value: sz, onChange: e => {const v = e.target.value; selectedApp.scale.z = v; setSz(v);}};
-  
+  px = { value: px, onChange: e => { const v = e.target.value; selectedApp.position.x = v; setPx(v); } };
+  py = { value: py, onChange: e => { const v = e.target.value; selectedApp.position.y = v; setPy(v); } };
+  pz = { value: pz, onChange: e => { const v = e.target.value; selectedApp.position.z = v; setPz(v); } };
+  rx = { value: rx, onChange: e => { const v = e.target.value; selectedApp.rotation.x = v; setRx(v); } };
+  ry = { value: ry, onChange: e => { const v = e.target.value; selectedApp.rotation.y = v; setRy(v); } };
+  rz = { value: rz, onChange: e => { const v = e.target.value; selectedApp.rotation.z = v; setRz(v); } };
+  sx = { value: sx, onChange: e => { const v = e.target.value; selectedApp.scale.x = v; setSx(v); } };
+  sy = { value: sy, onChange: e => { const v = e.target.value; selectedApp.scale.y = v; setSy(v); } };
+  sz = { value: sz, onChange: e => { const v = e.target.value; selectedApp.scale.z = v; setSz(v); } };
+
   const userOpen = open === 'user';
   const scenesOpen = open === 'scenes';
   const multiplayerOpen = open === 'multiplayer';
@@ -348,11 +361,13 @@ export default function Header({
   const worldOpen = open === 'world';
   const magicMenuOpen = open === 'magicMenu';
   const multiplayerConnected = !!roomName;
-  
-  const toggleOpen = newOpen => {
+
+  const toggleOpen = newOpen =>
+  {
     setOpen(newOpen === open ? null : newOpen);
   };
-  const toggleMic = async e => {
+  const toggleMic = async e =>
+  {
     // console.log('toggle mic');
     if (!world.micEnabled()) {
       await world.enableMic();
@@ -362,64 +377,75 @@ export default function Header({
       setMicOn(false);
     }
   };
-  const selectApp = (app, physicsId, position) => {
+  const selectApp = (app, physicsId, position) =>
+  {
     game.setMouseSelectedObject(app, physicsId, position);
   };
-  
   const _formatContentId = contentId => contentId.replace(/^[\s\S]*\/([^\/]+)$/, '$1');
-  useEffect(() => {
-    const update = e => {
+  useEffect(() =>
+  {
+    const update = e =>
+    {
       setApps(world.appManager.getApps().slice());
     };
     world.appManager.addEventListener('appadd', update);
     world.appManager.addEventListener('appremove', update);
   }, []);
-  useEffect(() => {
-    localPlayer.addEventListener('wearupdate', e => {
+  useEffect(() =>
+  {
+    localPlayer.addEventListener('wearupdate', e =>
+    {
       const wearActions = _getWearActions();
       setWearActions(wearActions);
-      
+
       const mouseDomEquipmentHoverObject = game.getMouseDomEquipmentHoverObject();
       if (mouseDomEquipmentHoverObject && !wearActions.some(action => action.type === 'wear' && action.instanceId === mouseDomEquipmentHoverObject.instanceId)) {
         game.setMouseDomEquipmentHoverObject(null);
       }
     });
   }, []);
-  useEffect(() => {
-    const pointerlockchange = e => {
+  useEffect(() =>
+  {
+    const pointerlockchange = e =>
+    {
       // console.log('pointer lock change', e, document.pointerLockElement);
       if (document.pointerLockElement) {
         setOpen(null);
       }
     };
     window.document.addEventListener('pointerlockchange', pointerlockchange);
-    return () => {
+    return () =>
+    {
       window.document.removeEventListener('pointerlockchange', pointerlockchange);
     };
   }, []);
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (open && document.pointerLockElement && open !== 'chat') {
       document.exitPointerLock();
     }
   }, [open]);
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (address && !nfts) {
       setNfts([]);
-      
-      (async () => {
+
+      (async () =>
+      {
         const res = await fetch(`https://api.opensea.io/api/v1/assets?owner=${address}&limit=${50}`, {
           headers: {
             'X-API-KEY': `6a7ceb45f3c44c84be65779ad2907046`,
           },
         });
         const j = await res.json();
-        const {assets} = j;
+        const { assets } = j;
         setNfts(assets);
         // console.log('got assets', assets);
       })();
     }
   }, [address, nfts]);
-  const _loadUrlState = () => {
+  const _loadUrlState = () =>
+  {
     const src = _getCurrentSceneSrc();
     setSceneName(src);
     const roomName = _getCurrentRoom();
@@ -429,32 +455,39 @@ export default function Header({
     }
     // console.log('set url state', {src, roomName, search: window.location.search, q: parseQuery(window.location.search)});
   };
-  useEffect(() => {
+  useEffect(() =>
+  {
     // console.log('waiting');
-    const pushstate = e => {
+    const pushstate = e =>
+    {
       _loadUrlState();
       // console.log('set room name', {roomName});
     };
-    const popstate = e => {
+    const popstate = e =>
+    {
       _loadUrlState();
       // console.log('set room name', {roomName});
-      
+
       universe.handleUrlUpdate();
     };
     window.addEventListener('pushstate', pushstate);
     window.addEventListener('popstate', popstate);
-    return () => {
+    return () =>
+    {
       window.removeEventListener('pushstate', pushstate);
       window.removeEventListener('popstate', popstate);
     };
   }, []);
-  useEffect(() => {
+  useEffect(() =>
+  {
     _loadUrlState();
   }, []);
-  useEffect(() => {
-    const pickup = e => {
-      const {app} = e.data;
-      const {contentId} = app;
+  useEffect(() =>
+  {
+    const pickup = e =>
+    {
+      const { app } = e.data;
+      const { contentId } = app;
       const newClaims = claims.slice();
       newClaims.push({
         contentId,
@@ -462,33 +495,37 @@ export default function Header({
       setClaims(newClaims);
     };
     world.appManager.addEventListener('pickup', pickup);
-    return () => {
+    return () =>
+    {
       world.appManager.removeEventListener('pickup', pickup);
     };
   }, [claims]);
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (previewCanvasRef.current) {
       app.bindPreviewCanvas(previewCanvasRef.current);
     }
   }, [previewCanvasRef.current]);
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (selectedApp && panelsRef.current) {
       panelsRef.current.scrollTo(0, 0);
     }
   }, [selectedApp, panelsRef.current]);
-  
+
   const lastEmoteKey = {
     key: -1,
     timestamp: 0,
   };
-  const _emoteKey = key => {
+  const _emoteKey = key =>
+  {
     const timestamp = performance.now();
     if ((timestamp - lastEmoteKey.timestamp) < 1000) {
       const key1 = lastEmoteKey.key;
       const key2 = key;
       const index = (key1 * 10) + key2;
       game.addLocalEmote(index);
-      
+
       lastEmoteKey.key = -1;
       lastEmoteKey.timestamp = 0;
     } else {
@@ -496,8 +533,9 @@ export default function Header({
       lastEmoteKey.timestamp = timestamp;
     }
   };
-  
-  const _handleNonInputKey = e => {
+
+  const _handleNonInputKey = e =>
+  {
     switch (e.which) {
       case 13: { // enter
         e.preventDefault();
@@ -526,10 +564,10 @@ export default function Header({
         return true;
       }
       case 191: { // /
-        if (!magicMenuOpen && !ioManager.inputFocused()) { 
+        if (!magicMenuOpen && !ioManager.inputFocused()) {
           e.preventDefault();
           e.stopPropagation();
-          
+
           // setPage('input');
           // setInput('');
           // setNeedsFocus(true);
@@ -546,7 +584,8 @@ export default function Header({
     }
     return false;
   };
-  const _handleAnytimeKey = e => {
+  const _handleAnytimeKey = e =>
+  {
     switch (e.which) {
       case 9: { // tab
         e.preventDefault();
@@ -562,8 +601,10 @@ export default function Header({
     }
     return false;
   };
-  useEffect(() => {
-    const keydown = e => {
+  useEffect(() =>
+  {
+    const keydown = e =>
+    {
       let handled = false;
       const inputFocused = document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.nodeName);
       if (!inputFocused) {
@@ -579,31 +620,36 @@ export default function Header({
       }
     };
     window.addEventListener('keydown', keydown);
-    return () => {
+    return () =>
+    {
       window.removeEventListener('keydown', keydown);
     };
   }, [open, selectedApp]);
-  useEffect(async () => {
+  useEffect(async () =>
+  {
     const isXrSupported = await app.isXrSupported();
     // console.log('is supported', isXrSupported);
     setXrSupported(isXrSupported);
   }, []);
-  useEffect(async () => {
-    window.addEventListener('click', e => {
+  useEffect(async () =>
+  {
+    window.addEventListener('click', e =>
+    {
       const hoverObject = game.getMouseHoverObject();
       if (hoverObject) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const physicsId = game.getMouseHoverPhysicsId();
         const position = game.getMouseHoverPosition();
         selectApp(hoverObject, physicsId, position);
       }
     });
   }, []);
-  useEffect(() => {
+  useEffect(() =>
+  {
     if (selectedApp) {
-      const {position, quaternion, scale} = selectedApp;
+      const { position, quaternion, scale } = selectedApp;
       const rotation = localEuler.setFromQuaternion(quaternion, 'YXZ');
       setPx(position.x);
       setPy(position.y);
@@ -616,31 +662,36 @@ export default function Header({
       setSz(scale.z);
     }
   }, [selectedApp]);
-  useEffect(() => {
-    const dragchange = e => {
-      const {dragging} = e.data;
+  useEffect(() =>
+  {
+    const dragchange = e =>
+    {
+      const { dragging } = e.data;
       setDragging(dragging);
     };
     world.appManager.addEventListener('dragchange', dragchange);
-    const selectchange = e => {
+    const selectchange = e =>
+    {
       setSelectedApp(e.data.app);
     };
     world.appManager.addEventListener('selectchange', selectchange);
-    return () => {
+    return () =>
+    {
       world.appManager.removeEventListener('dragchange', dragchange);
       world.appManager.removeEventListener('selectchange', selectchange);
     };
   }, [dragging]);
 
-	return (
-    <div className={styles.container} onClick={e => {
+  return (
+    <div className={styles.container} onClick={e =>
+    {
       e.stopPropagation();
     }}>
       <Inspector open={open} setOpen={setOpen} selectedApp={selectedApp} dragging={dragging} />
-			<Chat open={open} setOpen={setOpen} />
+      <Chat open={open} setOpen={setOpen} />
       <MagicMenu open={open} setOpen={setOpen} />
       <div className={styles.inner}>
-				<header className={styles.header}>
+        <header className={styles.header}>
           <div className={styles.row}>
             <a href="/" className={styles.logo}>
               <img src="images/arrow-logo.svg" className={styles.image} />
@@ -665,7 +716,7 @@ export default function Header({
               toggleOpen={toggleOpen}
             />
           </div>
-				</header>
+        </header>
         <header className={classnames(styles.header, styles.subheader)}>
           <div className={styles.row}>
             <Tab
@@ -688,25 +739,29 @@ export default function Header({
                   {/* <div className={styles['panel-header']}>
                     <h1>Equipment</h1>
                   </div> */}
-                  {wearActions.map((wearAction, i) => {
+                  {wearActions.map((wearAction, i) =>
+                  {
                     return (
                       <div
                         className={styles.equipment}
                         key={i}
-                        onMouseEnter={e => {
+                        onMouseEnter={e =>
+                        {
                           const app = metaversefile.getAppByInstanceId(wearAction.instanceId);
                           game.setMouseHoverObject(null);
                           const physicsId = app.getPhysicsObjects()[0]?.physicsId;
                           game.setMouseDomEquipmentHoverObject(app, physicsId);
                         }}
-                        onMouseLeave={e => {
+                        onMouseLeave={e =>
+                        {
                           game.setMouseDomEquipmentHoverObject(null);
                         }}
                       >
                         <img src="images/webpencil.svg" className={classnames(styles.background, styles.violet)} />
                         <img src="images/flower.png" className={styles.icon} />
                         <div className={styles.name}>{wearAction.instanceId}</div>
-                        <button className={styles.button} onClick={e => {
+                        <button className={styles.button} onClick={e =>
+                        {
                           const localPlayer = metaversefile.useLocalPlayer();
                           const app = metaversefile.getAppByInstanceId(wearAction.instanceId);
                           localPlayer.unwear(app);
@@ -741,29 +796,34 @@ export default function Header({
                     <h1>Tokens</h1>
                   </div>
                   <div className={styles.objects}>
-                    {apps.map((app, i) => {
+                    {apps.map((app, i) =>
+                    {
                       return (
-                        <div className={classnames(styles.object, app === selectedApp ? styles.selected : null)} key={i} onClick={e => {
+                        <div className={classnames(styles.object, app === selectedApp ? styles.selected : null)} key={i} onClick={e =>
+                        {
                           e.preventDefault();
                           e.stopPropagation();
-                          
+
                           const physicsObjects = app.getPhysicsObjects();
                           const physicsObject = physicsObjects[0] || null;
                           const physicsId = physicsObject ? physicsObject.physicsId : 0;
                           selectApp(app, physicsId);
-                          
+
                           const localPlayer = metaversefile.useLocalPlayer();
                           localPlayer.lookAt(app.position);
-                        }} onMouseEnter={e => {
+                        }} onMouseEnter={e =>
+                        {
                           const physicsObjects = app.getPhysicsObjects();
                           const physicsObject = physicsObjects[0] || null;
                           const physicsId = physicsObject ? physicsObject.physicsId : 0;
-                          
+
                           game.setMouseHoverObject(null);
                           game.setMouseDomHoverObject(app, physicsId);
-                        }} onMouseLeave={e => {
+                        }} onMouseLeave={e =>
+                        {
                           game.setMouseDomHoverObject(null);
-                        }} onMouseMove={e => {
+                        }} onMouseMove={e =>
+                        {
                           e.stopPropagation();
                           // game.setMouseSelectedObject(null);
                         }}>
@@ -779,10 +839,11 @@ export default function Header({
                 </div>),
                 (selectedApp ? <div className={styles.panel} key="right">
                   <div className={styles['panel-header']}>
-                    <div className={classnames(styles.button, styles.back)} onClick={e => {
+                    <div className={classnames(styles.button, styles.back)} onClick={e =>
+                    {
                       e.preventDefault();
                       e.stopPropagation();
-                      
+
                       setSelectedApp(null);
                     }}>
                       <img src="images/webchevron.svg" className={styles.img} />
@@ -815,7 +876,8 @@ export default function Header({
             />
             <Tab
               type="xr"
-              onclick={async e => {
+              onclick={async e =>
+              {
                 if (xrSupported) {
                   await app.enterXr();
                 }
@@ -862,13 +924,15 @@ export default function Header({
             />
           </div>
         </header>
-        
-        <section className={classnames(styles.sidebar, userOpen ? styles.open : null)} onClick={e => {
+
+        <section className={classnames(styles.sidebar, userOpen ? styles.open : null)} onClick={e =>
+        {
           e.preventDefault();
           e.stopPropagation();
         }}>
-          {(nfts || []).map((nft, i) => {
-            const {id, asset_contract, name, description} = nft;
+          {(nfts || []).map((nft, i) =>
+          {
+            const { id, asset_contract, name, description } = nft;
             const image_preview_url = hacks.getNftImage(nft);
             /* if (!image_preview_url) {
               console.log('got nft', {nft, hacks, image_preview_url});
@@ -876,7 +940,8 @@ export default function Header({
             } */
             // "https://storage.opensea.io/files/099f7815733ba38b897f892a750e11dc.svg"
             // console.log(nft);
-            return <div className={styles.nft} onDragStart={e => {
+            return <div className={styles.nft} onDragStart={e =>
+            {
               e.dataTransfer.setData('application/json', JSON.stringify(nft));
             }} draggable key={i}>
               <img src={image_preview_url} className={styles.preview} />

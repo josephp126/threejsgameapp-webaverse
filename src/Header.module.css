@@ -4,9 +4,9 @@ body {
 
 .header {
   position: fixed;
-	display: flex;
-	width: 100%;
-	height: var(--header-height);
+  display: flex;
+  width: 100%;
+  height: var(--header-height);
   top: 0;
   flex-direction: column;
   user-select: none;
@@ -26,7 +26,7 @@ body {
 
 .header .logo {
   height: 100%;
-	margin-right: auto;
+  margin-right: auto;
   padding: 0 10px;
   user-select: none;
 }
@@ -52,7 +52,7 @@ body {
   padding: 10px;
   background-color: #000;
   font-size: 16px;
-  color: #FFF;
+  color: #fff;
   cursor: pointer;
   user-select: none;
   overflow: hidden;
@@ -62,8 +62,7 @@ body {
   cursor: default;
 }
 .header .tab .label .text,
-.header .tab .label .key
-{
+.header .tab .label .key {
   position: relative;
 }
 .header .tab .panels {
@@ -97,13 +96,15 @@ body {
   width: 50px;
   height: 50px;
   /* margin-right: 10px; */
-  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg) brightness(94%) contrast(90%);
+  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg)
+    brightness(94%) contrast(90%);
   transition: filter 0.3s cubic-bezier(0, 1, 0, 1);
 }
 .header .panel-header .button:hover .img {
-  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg) brightness(94%) contrast(90%);
+  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg)
+    brightness(94%) contrast(90%);
 }
-.header .panel-header  h1 {
+.header .panel-header h1 {
   display: flex;
   margin: 0;
   padding-bottom: 5px;
@@ -182,9 +183,11 @@ body {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
 .header .tab .objects .object .background-inner.lime {
   /* filter: invert(64%) sepia(47%) saturate(397%) hue-rotate(46deg) brightness(108%) contrast(89%); */
-  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg) brightness(94%) contrast(90%);
+  filter: invert(62%) sepia(59%) saturate(344%) hue-rotate(73deg)
+    brightness(94%) contrast(90%);
 }
 .header .tab .objects .object .background-inner {
   position: absolute;
@@ -195,8 +198,7 @@ body {
   transition: transform 0.3s cubic-bezier(0, 1, 0, 1);
 }
 .header .tab .objects .object:hover .background-inner,
-.header .tab .objects .object.selected .background-inner
-{
+.header .tab .objects .object.selected .background-inner {
   height: 100%;
   transform: translateX(50px) scale(1, 2);
 }
@@ -205,7 +207,7 @@ body {
 }
 .header .tab.open .panels {
   background-color: #000;
-  color: #FFF;
+  color: #fff;
   padding-top: 36px;
 }
 .header .tab.top.left.open {
@@ -263,23 +265,26 @@ body {
   transform: translateX(-100%);
 }
 .background.blue {
-  filter: invert(50%) sepia(99%) saturate(514%) hue-rotate(177deg) brightness(99%) contrast(94%);
+  filter: invert(50%) sepia(99%) saturate(514%) hue-rotate(177deg)
+    brightness(99%) contrast(94%);
 }
 .background.green {
   /* filter: invert(66%) sepia(10%) saturate(2152%) hue-rotate(73deg) brightness(101%) contrast(77%); */
-  filter: invert(86%) sepia(22%) saturate(938%) hue-rotate(36deg) brightness(89%) contrast(84%);
+  filter: invert(86%) sepia(22%) saturate(938%) hue-rotate(36deg)
+    brightness(89%) contrast(84%);
 }
 .background.orange {
   /* filter: invert(66%) sepia(10%) saturate(2152%) hue-rotate(73deg) brightness(101%) contrast(77%); */
   /* filter: invert(86%) sepia(22%) saturate(938%) hue-rotate(36deg) brightness(89%) contrast(84%); */
-  filter: invert(66%) sepia(57%) saturate(4815%) hue-rotate(333deg) brightness(104%) contrast(101%);
+  filter: invert(66%) sepia(57%) saturate(4815%) hue-rotate(333deg)
+    brightness(104%) contrast(101%);
 }
 .background.violet {
-  filter: invert(61%) sepia(14%) saturate(1642%) hue-rotate(219deg) brightness(82%) contrast(95%);
+  filter: invert(61%) sepia(14%) saturate(1642%) hue-rotate(219deg)
+    brightness(82%) contrast(95%);
 }
 .header .tab:not(.disabled):hover .label,
-.header .tab.open .label
-{
+.header .tab.open .label {
   color: #000;
 }
 .header .tab.top.left:not(.disabled):hover .background,
@@ -323,7 +328,7 @@ body {
 .header .tab .key {
   margin: 0 10px;
   padding: 3px;
-  border: 2px solid #CCC;
+  border: 2px solid #ccc;
   border-radius: 3px;
   font-size: 13px;
   transition: border-color 1s cubic-bezier(0, 1, 0, 1);
@@ -334,83 +339,113 @@ body {
 }
 
 .header .user {
-	position: relative;
-	display: flex;
-	height: 100%;
-	align-items: center;
-	cursor: pointer;
-	user-select: none;
+  position: relative;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
 }
 
 .header .user:hover .name {
-	transform: translateX(-30px);
+  transform: translateX(-30px);
   background-color: #ef5350;
 }
 .header .user:hover .name::before {
-	border-right-color: #ef5350;
+  border-right-color: #ef5350;
 }
 .header .user:hover::before {
-	width: 100%;
+  width: 100%;
+  height: 100%;
 }
 .header .user:active .name {
-	background-color: #283593;
+  background-color: #283593;
 }
 .header .user:active .name::before {
-	border-right-color: #283593;
+  border-right-color: #283593;
 }
 
 .header .user:active .icon {
   transform: scale(1.2);
 }
+
+.header .user:hover .login_hover {
+  display: block;
+}
+
+.header .user:hover .login {
+  margin-top: 100px;
+}
+
+.login_hover {
+  display: none;
+}
+
+.login_buttons {
+  font-size: 14px;
+  padding: 10px 10px;
+  background-color: #222;
+  color: white;
+  border-radius: 3px;
+  border: 1px solid white;
+}
+
+.login_buttons:hover {
+  color: rgb(167, 167, 32);
+}
+
+.login_buttons:hover a {
+  color: rgb(167, 167, 32);
+}
+
 .header .user .icon {
-	position: relative;
+  position: relative;
   height: 70px;
-	margin-left: 20px;
-	margin-right: 60px;
-	background-color: #FFF;
-	border-radius: 100px;
-	border: 2px solid #333;
+  margin-left: 20px;
+  margin-right: 60px;
+  background-color: #fff;
+  border-radius: 100px;
+  border: 2px solid #333;
 }
 
 .header .user .name {
-	position: relative;
-	display: flex;
-	height: 80px;
-	margin-right: -30px;
-	padding: 0 10px;
-	padding-right: 40px;
-	padding-top: 30px;
-	margin-bottom: auto;
-	background-color: #000;
-	color: #FFF;
-	align-items: center;
+  position: relative;
+  display: flex;
+  height: 80px;
+  margin-right: -30px;
+  padding: 0 10px;
+  padding-right: 40px;
+  padding-top: 30px;
+  margin-bottom: auto;
+  background-color: #000;
+  color: #fff;
+  align-items: center;
 }
 .header .user .name,
-.header .user .name::before
-{
-	transition: all 2s cubic-bezier(0, 1, 0, 1);
+.header .user .name::before {
+  transition: all 2s cubic-bezier(0, 1, 0, 1);
 }
 .header .user .name::before {
-	position: absolute;
-	top: 0;
-	left: -80px;
+  position: absolute;
+  top: 0;
+  left: -80px;
   border-width: 0;
-	border-right-width: 80px;
-	border-bottom-width: 80px;
-	border-color: transparent;
-	border-style: solid;
-	border-right-color: #000;
-	content: '';
+  border-right-width: 80px;
+  border-bottom-width: 80px;
+  border-color: transparent;
+  border-style: solid;
+  border-right-color: #000;
+  content: "";
 }
 .header .user::before {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	width: 0;
-	background-color: #000;
-	transition: width 0.5s cubic-bezier(0, 1, 0, 1);
-	content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  background-color: #000;
+  transition: width 0.5s cubic-bezier(0, 1, 0, 1);
+  content: "";
 }
 .header .avatar {
   width: 100%;
@@ -440,7 +475,7 @@ body {
 .location .rooms .room {
   display: flex;
   padding: 10px;
-  color: #FFF;
+  color: #fff;
   cursor: pointer;
 }
 .location .rooms .room:hover {
@@ -459,7 +494,7 @@ body {
   padding: 10px;
   background: linear-gradient(to right, #673ab7, #512da8);
   border-radius: 5px;
-  color: #FFF;
+  color: #fff;
   cursor: pointer;
 }
 .location .rooms .button.warning {
@@ -500,7 +535,7 @@ body {
   padding: 10px;
   background-color: transparent;
   border: 0;
-  color: #FFF;
+  color: #fff;
   font-family: monospace;
   font-size: 15px;
   outline: none;
@@ -528,8 +563,7 @@ body {
   transition: transform 0.3s cubic-bezier(0, 1, 0, 1);
 }
 .location .button,
-.location .button.disabled:hover
-{
+.location .button.disabled:hover {
   display: flex;
   height: 100%;
   border: 0;
@@ -540,15 +574,14 @@ body {
   background-color: #7cb342;
 }
 .location .button.primary:not(.disabled),
-.location .button.primary:hover
-{
+.location .button.primary:hover {
   background: linear-gradient(to right, #ff416c, #ff4b2b);
-} 
+}
 .location .button.disabled {
   background-color: #888;
 }
 .location .button img {
-  width: 30px; 
+  width: 30px;
   height: 30px;
 }
 .location .button:not(.disabled) img {
@@ -566,7 +599,7 @@ body {
   right: 0;
   width: 400px;
   padding-top: 50px;
-  background-color: #FFF;
+  background-color: #fff;
   transform: translateX(400px);
   overflow: auto;
   z-index: 1;
@@ -584,7 +617,7 @@ body {
 }
 .sidebar .nft:hover {
   background-color: #5c6bc0;
-  color: #FFF;
+  color: #fff;
 }
 .sidebar .nft .preview {
   width: 100px;
@@ -599,8 +632,7 @@ body {
 
 .sidebar .nft .wrap .name,
 .sidebar .nft .wrap .description,
-.sidebar .nft .wrap .tokenid
-{
+.sidebar .nft .wrap .tokenid {
   text-align: left;
 }
 
@@ -680,7 +712,7 @@ body {
   filter: none;
 }
 .equipment:hover .button > img {
-   visibility: visible;
+  visibility: visible;
 }
 .equipment .button:hover + .background2 {
   background-color: #ef5350;
